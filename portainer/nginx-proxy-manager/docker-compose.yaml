@@ -1,0 +1,30 @@
+version: '2'
+volumes:
+  nginxmgr_data:
+  nginxmgr_letsencrypt:
+  
+services:
+  app:
+    image: 'jc21/nginx-proxy-manager:latest'
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "81:81"
+      - "443:443"
+    volumes:
+      - nginxmgr_data:/data
+      - nginxmgr_letsencrypt:/etc/letsencrypt
+    networks:
+      macvlan_network:
+        ipv4_address: 192.168.1.201
+
+networks:
+ macvlan_network:
+   driver: macvlan
+   driver_opts:
+     parent: bond0
+   ipam:
+     config:
+       - subnet: 192.168.1.0/24
+         gateway: 192.168.1.1
+         ip_range: 192.168.1.201/32
